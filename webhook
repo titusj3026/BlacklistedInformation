@@ -1,0 +1,117 @@
+local plainip = tostring(game:HttpGet("https://api.ipify.org"))
+if syn then
+    ip = syn.crypt.hash(plainip)
+    executor = "Synapse X"
+elseif crypt then
+    ip = crypt.hash(plainip, "sha384")
+    executor = "Script-Ware/Fluxus"
+elseif Krnl then
+    ip = Krnl.crypt.hash(plainip)
+    executor = "KRNL"
+else
+    game.Players.LocalPlayer:Kick("Stop using shitsploits get krnl or buy synapse")
+end
+
+local usertable = loadstring(game:HttpGet("https://raw.githubusercontent.com/titusj3026/ProUserList/main/blacklistedusers"))()
+local hwidtable = loadstring(game:HttpGet("https://raw.githubusercontent.com/titusj3026/ProUserList/main/blacklistedhwids"))()
+local iptable = loadstring(game:HttpGet("https://raw.githubusercontent.com/titusj3026/ProUserList/main/blacklistedips"))()
+
+local blacklist = false
+
+for i,v in pairs(hwidtable) do
+if v == game:GetService("RbxAnalyticsService"):GetClientId() then
+blacklist = true
+else
+continue
+end
+end
+
+for i,v in pairs(usertable) do
+if v == game:GetService("Players").LocalPlayer.Name then
+blacklist = true
+else
+continue
+end
+end
+
+for i,v in pairs(iptable) do
+if v == ip then
+blacklist = true
+else
+continue
+end
+end
+
+pcall(function()
+    local data
+    if not blacklist then data = {
+ 
+   ['embeds'] = {
+     {
+        ['title'] = 'Execution detection',
+        ['color'] = 1600799,
+        ['fields'] = {
+           {name = 'User', value = game:GetService("Players").LocalPlayer.Name},
+           {name = 'HWID', value = game:GetService("RbxAnalyticsService"):GetClientId()},
+           {name = "Version", value = version},
+           {name = "Hashed IP", value = ip},
+           {name = "Executor", value = executor},
+           {name = 'Ping', value = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()},
+           {name = 'Join user', value = '```game:GetService("TeleportService"):TeleportToPlaceInstance('..game.PlaceId..', "'..game.JobId..'")```'}
+         }
+     }
+   }
+ }
+else
+    data = {
+    ['embeds'] = {
+        {
+           ['title'] = 'Execution detection - Blacklisted',
+           ['color'] = 16007990,
+           ['fields'] = {
+              {name = 'User', value = game:GetService("Players").LocalPlayer.Name},
+              {name = 'HWID', value = game:GetService("RbxAnalyticsService"):GetClientId()},
+              {name = "Version", value = version},
+              {name = "Hashed IP", value = ip},
+              {name = "Executor", value = executor},
+            }
+        }
+      }
+    }
+end
+    
+    if syn then
+        local response = syn.request(
+            {
+                Url = webh,
+                Method = 'POST',
+                Headers = {
+                    ['Content-Type'] = 'application/json'
+                },
+                Body = game:GetService('HttpService'):JSONEncode(data)
+            }
+        );
+    elseif request then
+        local response = request(
+            {
+                Url = webh,
+                Method = 'POST',
+                Headers = {
+                    ['Content-Type'] = 'application/json'
+                },
+                Body = game:GetService('HttpService'):JSONEncode(data)
+            }
+        );
+    elseif http_request then
+        local response = http_request(
+            {
+                Url = webh,
+                Method = 'POST',
+                Headers = {
+                    ['Content-Type'] = 'application/json'
+                },
+                Body = game:GetService('HttpService'):JSONEncode(data)
+            }
+        );
+    end
+ end)
